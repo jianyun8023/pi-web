@@ -105,4 +105,10 @@ uv run --no-project python -m unittest discover -s tests -p test_ai_dotfiles.py
 
 覆盖是行为矩阵，不是全仓行覆盖率声明。未实测 Bun、Windows/Linux UI、真实磁盘耗尽/断电、超长会话服务器分页或任意扩展内部网络访问；写盘失败和进程中断以故障注入/持久历史 fixture 验证。UI 当前按完整活跃分支归并后每页 30 项，没有服务器分页。插件实现工具权限审核，不能替代操作系统或网络沙箱。
 
-部署前发现 `pi-background-tasks@2.6.10` 的旧 SDK peer 约束。安装器已改为独立 `npm/permission-fork-runtime`，两个审核包使用相对链接绑定 Pi 1.3.0 运行依赖；其余插件及其旧 SDK 保留。真实复制现有 npm 树后安装、搬移 agent 目录及校验列为部署前测试，不使用 `--force` / `--legacy-peer-deps` 掩盖冲突。
+部署前发现 `pi-background-tasks@2.6.10` 的旧 SDK peer 约束。安装器已改为独立 `npm/permission-fork-runtime`，两个审核包使用相对链接绑定 Pi 1.3.0 运行依赖；其余插件的依赖声明与已安装内容保留。真实复制现有 npm 树后安装、搬移 agent 目录及校验列为部署前测试，不使用 `--force` / `--legacy-peer-deps` 掩盖冲突。
+
+## 本机切换结果
+
+已切换到代码提交 `654178568f7cc3a1777b4708299bde1acd46b95b`。`http://127.0.0.1:30141` 健康；真实配置下创建只读 RPC 会话，确认 `permission-history`、`auto-review-approve`、`auto-review-break-glass` 均注册。主模型仍为 `magpie/group/kimi-k2.8`。安装完整性与 dotfiles `--permissions-only --check` 通过，原目录直接运行 11 个 Python 测试通过。
+
+运行 settings.json、npm/package.json、npm/package-lock.json 与 background 插件包元数据逐字节对照备份未变；根 npm 原本未安装 Pi SDK，该状态保留，审核包的独立运行依赖为 1.3.0。组合备份编号为 `2026-10-19T16-42-15-910Z`，含恢复脚本和事务日志。回滚故障场景在临时目录验证，没有为演示再切回生产旧版。
