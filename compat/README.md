@@ -46,3 +46,5 @@ npm run build
 ```
 
 The tests reproduce the upstream early-registration gap and exercise both registration orders, reload/session isolation, model allow/deny/defer/failure order, exact single-use receipts, manual cancellation/reconnect, RPC recovery commands and a real SDK session writing a temporary marker through both extensions. The model provider is deterministic in regression tests; no real user files are written. Pi 1.3 resolves a bare model ID shared by multiple providers to all matching owners; the model-panel contract test now follows that SDK behavior.
+
+The permission pair uses its own `npm/permission-fork-runtime` to avoid overriding SDK peers needed by unrelated plugins (notably `pi-background-tasks`). Relative links keep the combination relocatable; install activation has its own rollback journal. Root npm dependencies are preserved.

@@ -16,12 +16,12 @@
 | --- | --- | --- |
 | 权限引擎完整 Vitest | 6,434 通过，186 文件 | 包含 8 个公开案例等价回归、审计并发/生命周期和 TUI 来源回归 |
 | reviewer 完整 Node 测试 | 255 通过，3 跳过 | 跳过的均为 Bun 专用 SQLite/WAL/编译运行项；本机采用 Node |
-| Web 完整 Node 测试 | 2,838 通过，1 平台跳过 | 真实打包 fork 消费另运行 39 通过、1 跳过；这些是重叠集合，不相加 |
+| Web 完整 Node 测试 | 2,839 通过，1 平台跳过 | 真实打包 fork 消费另运行 40 通过、1 跳过；这些是重叠集合，不相加 |
 | 类型检查 | 三包通过 | 权限 public types 构建通过；Web TypeScript、reviewer TypeScript 通过 |
 | Web lint / production build | 通过 | 构建仍有原 session export 动态依赖表达式警告，不属于本次权限变更 |
 | dotfiles 渲染与幂等 | 11 通过 | 用 uv 运行 Python unittest；包含多主机配置渲染 |
 | 配置与真实引擎 | 23 条规则 + 3 条组合命令通过 | 同时验证 bg_run 分派、危险命令在模型前拒绝、模型不可用 defer |
-| 组合交付 / 回滚 | 8 项通过 | 同版本篡改、额外源码、重复/路径覆盖、SDK 漂移、归档损坏；部分切换失败和中断恢复 |
+| 组合交付 / 回滚 | 9 项通过 | 同版本篡改、额外源码、重复/路径覆盖、SDK 漂移、归档损坏；部分切换失败和中断恢复 |
 | 真实 npm 安装 | 通过 | 独立 agentDir 从两个 tarball 安装，精确 SDK peers，安装后完整性验证 |
 | dotfiles setup 消费 | 通过 | 锁定 fork 正常、同版本改源码失败、主 models.json 字节不变 |
 | 真实 RPC + SSE | 六种流程通过 | allow / defer / deny / offline / timeout / cancel；细项见下 |
@@ -104,3 +104,5 @@ uv run --no-project python -m unittest discover -s tests -p test_ai_dotfiles.py
 部署使用独立 release，等待无运行/待审批会话后切换。整个 npm 树、两份运行配置、setup/tools、相关 dotfiles 源文件、全局链接与 current.json 作为一个事务备份；`transaction.json` 可恢复半完成切换，备份中的 `rollback.cjs` 恢复并重启旧版本。主模型、models.json 和 auth.json 不改动。
 
 覆盖是行为矩阵，不是全仓行覆盖率声明。未实测 Bun、Windows/Linux UI、真实磁盘耗尽/断电、超长会话服务器分页或任意扩展内部网络访问；写盘失败和进程中断以故障注入/持久历史 fixture 验证。UI 当前按完整活跃分支归并后每页 30 项，没有服务器分页。插件实现工具权限审核，不能替代操作系统或网络沙箱。
+
+部署前发现 `pi-background-tasks@2.6.10` 的旧 SDK peer 约束。安装器已改为独立 `npm/permission-fork-runtime`，两个审核包使用相对链接绑定 Pi 1.3.0 运行依赖；其余插件及其旧 SDK 保留。真实复制现有 npm 树后安装、搬移 agent 目录及校验列为部署前测试，不使用 `--force` / `--legacy-peer-deps` 掩盖冲突。

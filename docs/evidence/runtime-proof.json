@@ -1,44 +1,44 @@
 [
   {
     "outcome": "allow",
-    "sessionId": "01a15503-d86f-76a2-a076-83fbc509fd82",
+    "sessionId": "01a1550a-4cf6-7289-92c5-4c30d1a22d2a",
+    "pass": true,
+    "gateCount": 2,
+    "durationMs": 991
+  },
+  {
+    "outcome": "defer",
+    "sessionId": "01a1550a-54c3-7289-92c5-4c333ab788b9",
     "pass": true,
     "gateCount": 2,
     "durationMs": 978
   },
   {
-    "outcome": "defer",
-    "sessionId": "01a15503-e06a-76a2-a076-83fd82e60e04",
-    "pass": true,
-    "gateCount": 2,
-    "durationMs": 1005
-  },
-  {
     "outcome": "deny",
-    "sessionId": "01a15503-e494-76a2-a076-83fe103a2f90",
+    "sessionId": "01a1550a-58a5-7289-92c5-4c3443ca3e66",
     "pass": true,
     "gateCount": 1,
-    "durationMs": 941
+    "durationMs": 930
   },
   {
     "outcome": "offline",
-    "sessionId": "01a15503-e852-76a2-a076-84001a461654",
+    "sessionId": "01a1550a-5c55-7289-92c5-4c376b3c486b",
     "pass": true,
     "gateCount": 1,
-    "durationMs": 145
+    "durationMs": 156
   },
   {
     "outcome": "timeout",
-    "sessionId": "01a15503-e8f3-76a2-a076-84026ab5a65b",
+    "sessionId": "01a1550a-5cff-7289-92c5-4c39e7d13963",
     "pass": true,
     "gateCount": 1,
-    "durationMs": 1664
+    "durationMs": 1665
   },
   {
     "outcome": "cancel",
-    "sessionId": "01a15503-ef81-76a2-a076-8404e36b22f0",
+    "sessionId": "01a1550a-638d-7289-92c5-4c3a4480c37b",
     "pass": true,
     "gateCount": 1,
-    "durationMs": 946
+    "durationMs": 952
   }
 ]
