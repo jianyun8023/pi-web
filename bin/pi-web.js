@@ -71,6 +71,16 @@ function exitWhenIdle(code) {
 function startServer({ port, hostname, openBrowser }) {
 
   const pkgDir = path.join(__dirname, "..");
+  // Refuse stale or replaced security sources before loading any session.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require("./pi-web-permissions").checkConfiguredPermissionCompatibility(
+      process.env.PI_CODING_AGENT_DIR || path.join(process.env.HOME || process.env.USERPROFILE || ".", ".pi", "agent"),
+    );
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
   const nextDir = path.join(pkgDir, ".next");
 
   // Resolve next's CLI entry directly to avoid relying on .bin symlinks (which
@@ -124,7 +134,7 @@ function startServer({ port, hostname, openBrowser }) {
   const child = spawn(process.execPath, getNextNodeArgs(nextBin, nextArgs), {
     cwd: pkgDir,
     stdio: ["inherit", "pipe", "inherit"],
-    env: { ...process.env, PI_WEB_HOSTNAME: hostname },
+    env: { ...process.env, PI_WEB_HOSTNAME: hostname, PI_WEB_SKIP_VERSION_CHECK: "1" },
   });
   wireChildProcessLifecycle(child);
 

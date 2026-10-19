@@ -100,6 +100,12 @@ async function runCommand(options, {
       return 0;
     }
     case "update":
+      // A registry update would replace this reviewed fork with upstream.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      if (require(path.join(pkgDir, "package.json")).piWebFork) {
+        error("This is the jianyun8023 fork. Update from its Git repository and rebuild; npm update is disabled.");
+        return 1;
+      }
       return runUpdate({
         check: options.check,
         currentVersion: getPackageVersion(pkgDir),

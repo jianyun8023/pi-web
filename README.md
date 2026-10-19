@@ -1,3 +1,5 @@
+> This is the [jianyun8023 fork](https://github.com/jianyun8023/pi-web). Permission review order and RPC compatibility: [compat/README.md](compat/README.md).
+
 # Pi Web
 
 [中文文档](./docs/README.zh-CN.md) | [日本語](./docs/README.ja.md) | [Русский](./docs/README.ru.md)

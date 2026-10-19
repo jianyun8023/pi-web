@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "packages": {
+    "@erichll/pi-auto-review": {
+      "version": "0.27.0",
+      "files": {
+        "src/index.ts": {
+          "original": "70370a2987117caca236ce460741397d6327deb205e1c21e4be1f15ede0e58e2",
+          "patched": "90e905c27e67d34ce894a978e3356bc3401bbcc0f09ce3730cde49145618a0ed"
+        },
+        "src/rpc-auto-confirm.ts": {
+          "original": null,
+          "patched": "d1ecbec16b7a6b5d3523376ac6ac3125822a6c1a7245f3853ffd7fa71823b1fa"
+        }
+      }
+    },
+    "@gotgenes/pi-permission-system": {
+      "version": "41.0.0",
+      "files": {
+        "src/authority/local-user-authorizer.ts": {
+          "original": "a1b7469fc5f1c6b5935e06130ab34133b187af7cc3dc2c139466b2d257c245f7",
+          "patched": "2494eef40b6a4bddc36f4288cb23df551b1caf8f874af9474e3376a1743f2849"
+        },
+        "src/authority/permission-prompt-component.ts": {
+          "original": "8ee6e48f0d9a04cb509de7e7f8c9d7e8a760fbc95a2d9c182f9073d12dfbb437",
+          "patched": "aa4ef6164beaf9f5056797e63489ba7efcb93a0cc883f53113a039bf3fe3ed70"
+        },
+        "src/authority/rpc-reviewed-approval.ts": {
+          "original": null,
+          "patched": "88a7068f595ce210ef6b67fa0d2695797d46b44784d89d797de0dae5cfbc187d"
+        },
+        "src/authority/authorizer-selection.ts": {
+          "original": "37f6a2c6fe3150b6b8de77d0ba2df8c15cabb6ca25e5c64d4671648c0f01e8d9",
+          "patched": "f95ffcb5b74bf4811fb17e014200d8405f81175651891973b3f2c0e6d45fe2c1"
+        }
+      }
+    }
+  }
+}

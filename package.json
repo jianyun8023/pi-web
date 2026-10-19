@@ -2,13 +2,13 @@
   "name": "@agegr/pi-web",
   "version": "0.12.2",
   "description": "Web UI for the pi coding agent",
-  "homepage": "https://github.com/agegr/pi-web#readme",
+  "homepage": "https://github.com/jianyun8023/pi-web#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agegr/pi-web.git"
+    "url": "git+https://github.com/jianyun8023/pi-web.git"
   },
   "bugs": {
-    "url": "https://github.com/agegr/pi-web/issues"
+    "url": "https://github.com/jianyun8023/pi-web/issues"
   },
   "license": "MIT",
   "engines": {
@@ -32,7 +32,8 @@
     "!.next/**/*.js.map",
     "public",
     "next.config.ts",
-    "package.json"
+    "package.json",
+    "compat"
   ],
   "scripts": {
     "postinstall": "node bin/prepare-terminal.js",
@@ -48,13 +49,13 @@
     "release": "npm version patch --no-git-tag-version && npm run build && npm publish --access public"
   },
   "dependencies": {
-    "@earendil-works/pi-agent-core": "1.2.0",
-    "@earendil-works/pi-ai": "1.2.0",
-    "@earendil-works/pi-codemode": "1.2.0",
-    "@earendil-works/pi-coding-agent": "1.2.0",
-    "@earendil-works/pi-mcp": "1.2.0",
-    "@earendil-works/pi-telemetry": "1.2.0",
-    "@earendil-works/pi-tui": "1.2.0",
+    "@earendil-works/pi-agent-core": "1.3.0",
+    "@earendil-works/pi-ai": "1.3.0",
+    "@earendil-works/pi-codemode": "1.3.0",
+    "@earendil-works/pi-coding-agent": "1.3.0",
+    "@earendil-works/pi-mcp": "1.3.0",
+    "@earendil-works/pi-telemetry": "1.3.0",
+    "@earendil-works/pi-tui": "1.3.0",
     "@xterm/addon-fit": "0.11.0",
     "@xterm/xterm": "6.0.0",
     "js-yaml": "^5.2.3",
@@ -68,6 +69,8 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@erichll/pi-auto-review": "0.27.0",
+    "@gotgenes/pi-permission-system": "41.0.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/js-yaml": "^4.0.9",
     "@types/mdast": "^4.0.4",
@@ -98,5 +101,9 @@
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.2.2",
     "typescript": "^5"
+  },
+  "piWebFork": {
+    "repository": "jianyun8023/pi-web",
+    "compatibility": 1
   }
 }
