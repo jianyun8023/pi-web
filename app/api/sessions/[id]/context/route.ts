@@ -38,7 +38,7 @@ export async function GET(
       leafId: leafId ?? sm.getLeafId(),
       models: liveRpc?.inner.modelRuntime,
     });
-    const context = attachTranscriptNotices(buildSessionContext(entries as never, before ?? leafId, {
+    const context = attachTranscriptNotices(buildSessionContext(entries as never, before ?? leafId ?? sm.getLeafId(), {
       deferThinking,
       deferToolResultImages,
       tail,

@@ -1,3 +1,4 @@
+import { createPermissionAuditBridge } from "./permission-audit-bridge";
 import type { ThinkingLevel } from "@earendil-works/pi-agent-core";
 import {
   createAgentSessionFromServices,
@@ -64,7 +65,7 @@ export interface SubagentRuntimeDependencies {
   getSession(sessionId: string): HostSession | undefined;
   registerSession(
     inner: AgentSessionLike,
-    options?: { exactSystemPrompt?: () => string; chatOnly?: boolean; mcpHost?: McpHost },
+    options?: { permissionAudit?: ReturnType<typeof createPermissionAuditBridge>; exactSystemPrompt?: () => string; chatOnly?: boolean; mcpHost?: McpHost },
   ): HostSession | void;
   reopenSession(sessionId: string, sessionFile: string): Promise<HostSession>;
   resolveSessionPath(sessionId: string): Promise<string | null>;
@@ -385,7 +386,9 @@ export function createSubagentController(
             codemode: codemodeEnabled,
           })
         : undefined;
+      const permissionAudit = createPermissionAuditBridge();
       const extensionFactories = [
+        permissionAudit.extension,
         ...(codemodeExtension ? [codemodeExtension] : []),
         ...(mcp ? [...mcp.extensions, createSubagentMcpPolicyExtension(() => mcpScope)] : []),
         ...(skillsBinding.loaderOptions.extensionFactories ?? []),
@@ -494,6 +497,7 @@ export function createSubagentController(
       persistChildSession(sessionManager);
       skillsBinding.setActiveToolsGetter(() => inner.getActiveToolNames());
       const childSession = dependencies.registerSession(inner, {
+        permissionAudit,
         ...(skillsBinding.getExactSystemPrompt !== undefined
           ? { exactSystemPrompt: skillsBinding.getExactSystemPrompt }
           : {}),

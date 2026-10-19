@@ -1,5 +1,7 @@
 # Permission compatibility in the jianyun8023 fork
 
+Implemented design: [权限审核与 Web 可观测性](../docs/permission-review-design.zh-CN.md).
+
 This fork uses Pi SDK **1.3.0** and preserves the upstream npm package name/version for local installation. `package.json.piWebFork` identifies this build; registry updates are disabled so they cannot silently replace the compatibility changes.
 
 ## Review order
@@ -28,11 +30,11 @@ npm run build
 node bin/pi-web.js --hostname 127.0.0.1 --port 30141
 ```
 
-`--agent-dir /path/to/agent` overrides `PI_CODING_AGENT_DIR` / `~/.pi/agent`. The installer validates **both package versions and all affected source SHA-256 hashes before any write**. Original files receive `.pi-web-original` backups. Unknown versions or local edits in affected files require review; they are never overwritten. Other files, including existing local token estimation changes, are untouched. The launcher refuses unpatched/replaced configured permission plugins.
+`--agent-dir /path/to/agent` overrides the agent directory. The active delivery uses source forks packed into `vendor/`; `permission-bundle.json` locks plugin commits, archive hashes, all published files and Pi SDK 1.3.0. The installer validates both archives before npm mutates anything, pins the SDK peers, and checks the installed complete sources. Startup rejects same-version source replacement, extra source files, duplicate plugin registration, local package overrides and runtime drift. CJK token estimation is preserved in the reviewer fork.
 
-The source transforms and newly added TypeScript files live here; `manifest.json` pins the npm originals and patched outputs. Tests install the same transforms into isolated copies of the exact npm packages. Plugin reinstall/update may remove the patch: re-run verification, review the new source/version if different, and update the manifest deliberately. No release is published to npm by this task.
+The old transforms and `compat/manifest.json` remain frozen regression/rollback fixtures. They are no longer the active installation mechanism. No npm release is published. TUI automatic decisions retain upstream interception behavior, with machine provenance preserved instead of attributing them to a human.
 
-For this local build, copy the tested runtime files and dependencies into a dedicated release directory under `~/.local/share/pi-web-fork/releases/<commit>` and point the existing global `@agegr/pi-web` package link there after saving the original package directory. Keep the production `.next` separate from the source checkout so development builds cannot overwrite it. Deployment records and original package/plugin copies live under `~/.local/share/pi-web-fork/backups/`; `current.json` records the active release and backup. Restore the saved package directory and original extension files to roll back, then restart the service.
+Keep production build output in a dedicated release directory. Deployment checks that no session is running or waiting, prepares the new complete npm directory separately, and journals the switch of the package tree, configuration, global link and release pointer. `bin/pi-web-release-state.cjs` restores the whole combination after a partial failure; the generated backup rollback command also restarts the old release. Original checkouts and unrelated dotfiles changes are preserved. See [validation evidence](../docs/permission-review-validation.zh-CN.md).
 
 ## Validation
 

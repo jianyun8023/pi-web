@@ -1,4 +1,5 @@
 "use client";
+import { PermissionReviewDetails } from "./PermissionReviewDetails";
 
 import { memo, useState, useRef, useEffect, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
@@ -1222,6 +1223,7 @@ function ToolCallBlock({ block, result, duration, onOpenSubagent }: { block: Too
         background: isError ? "rgba(248,113,113,0.05)" : "rgba(34,197,94,0.04)",
       }}
     >
+      <PermissionReviewDetails toolCallId={block.toolCallId} />
       {/* ── Tool call header ── */}
       <div style={{ display: "flex", alignItems: "stretch", minWidth: 0 }}>
         <button

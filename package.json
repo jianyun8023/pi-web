@@ -33,7 +33,8 @@
     "public",
     "next.config.ts",
     "package.json",
-    "compat"
+    "compat",
+    "vendor"
   ],
   "scripts": {
     "postinstall": "node bin/prepare-terminal.js",
@@ -56,6 +57,7 @@
     "@earendil-works/pi-mcp": "1.3.0",
     "@earendil-works/pi-telemetry": "1.3.0",
     "@earendil-works/pi-tui": "1.3.0",
+    "@gotgenes/pi-permission-system": "file:vendor/gotgenes-pi-permission-system-41.0.0.tgz",
     "@xterm/addon-fit": "0.11.0",
     "@xterm/xterm": "6.0.0",
     "js-yaml": "^5.2.3",
@@ -70,7 +72,6 @@
   },
   "devDependencies": {
     "@erichll/pi-auto-review": "0.27.0",
-    "@gotgenes/pi-permission-system": "41.0.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/js-yaml": "^4.0.9",
     "@types/mdast": "^4.0.4",
@@ -88,6 +89,7 @@
     "katex": "^0.16.47",
     "mammoth": "^1.12.0",
     "mermaid": "^11.16.1",
+    "pi-permission-system-upstream": "npm:@gotgenes/pi-permission-system@^41.0.0",
     "playwright": "^1.62.1",
     "postcss": "^8.5.26",
     "react-markdown": "^10.1.0",
@@ -104,6 +106,6 @@
   },
   "piWebFork": {
     "repository": "jianyun8023/pi-web",
-    "compatibility": 1
+    "compatibility": 2
   }
 }

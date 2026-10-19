@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
   },
   // Node modules keep the syntax they ship unless listed here, and mermaid's
   // lazy diagram chunks are full of class `static {}` blocks (#753).
-  transpilePackages: ["mermaid", "@mermaid-js/parser"],
+  transpilePackages: ["@gotgenes/pi-permission-system", "mermaid", "@mermaid-js/parser"],
   serverExternalPackages: [
     "node-pty",
     "undici",

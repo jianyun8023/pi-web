@@ -1,4 +1,5 @@
 "use client";
+import { auditKey, auditUpdate, mergeAuditRows, type AuditRow } from "@/lib/permission-audit";
 
 import { useState, useCallback, useRef, useEffect, useLayoutEffect, useMemo, useReducer } from "react";
 import type {
@@ -65,6 +66,7 @@ export interface SessionData {
   /** "summary" when `tree` carries the body-free navigation format. */
   treeFormat?: "summary";
   context: {
+    permissionAudit?: AuditRow[];
     messages: AgentMessage[];
     entryIds: string[];
     oldestEntryId: string | null;
@@ -353,6 +355,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
   const [loading, setLoading] = useState(!isNew);
   const [error, setError] = useState<string | null>(null);
   const [activeLeafId, setActiveLeafId] = useState<string | null>(null);
+  const [permissionAudit, setPermissionAudit] = useState<AuditRow[]>([]);
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [activeToolResults, setActiveToolResults] = useState<Map<string, ToolResultMessage>>(new Map());
   const [entryIds, setEntryIds] = useState<string[]>([]);
@@ -694,6 +697,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
           }
         : d);
       setActiveLeafId(d.leafId);
+      setPermissionAudit(previous => mergeAuditRows(d.context.permissionAudit ?? [], previous.filter(row => row.live && (d.context.permissionAudit ?? []).some(next => auditKey(next.entry) === auditKey(row.entry)))));
       if (revisionUnchanged) {
         // Refresh the cached snapshot with the newest leaf/tree/stats while
         // preserving the wider loaded window.
@@ -812,6 +816,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const d = await res.json() as { context: SessionData["context"] };
       if (sessionIdRef.current !== sid || options?.signal?.aborted || !sessionHookMountedRef.current) return;
+      setPermissionAudit(previous => before ? mergeAuditRows(previous, d.context.permissionAudit ?? []) : mergeAuditRows([], d.context.permissionAudit ?? []));
       setHistoryCursor(d.context.oldestEntryId);
       setHasEarlierMessages(d.context.hasMore);
       setEarlierTurnCount(d.context.turnsBefore ?? 0);
@@ -1053,6 +1058,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
     // so without re-asserting it here shouldMaintain() refuses the connection
     // and the selected session never opens its event stream.
     sessionHookMountedRef.current = true;
+    setPermissionAudit([]);
     maintainEventsConnected(sid);
     return () => {
       if (sessionIdRef.current === sid) eventConnectionRef.current?.close();
@@ -1435,6 +1441,14 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
 
   const handleAgentEvent = useCallback((event: AgentEvent) => {
     switch (event.type) {
+      case "permission_audit_reset":
+        setPermissionAudit(previous => previous.map(row => ({ ...row, live: false })));
+        break;
+      case "permission_audit": {
+        const row = auditUpdate(event.update);
+        if (row && row.entry.adjudicatorSessionId === sessionIdRef.current) setPermissionAudit(previous => mergeAuditRows(previous, [row]));
+        break;
+      }
       case "connected": {
         dispatch({ type: "end" });
         if (Array.isArray(event.pendingExtensionUiIds)) {
@@ -2773,7 +2787,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
 
   return {
     // State
-    data, loading, error, activeLeafId, messages, activeToolResults, entryIds, messageKeys, historyCursor, hasEarlierMessages, earlierTurnCount, streamingStore,
+    permissionAudit, data, loading, error, activeLeafId, messages, activeToolResults, entryIds, messageKeys, historyCursor, hasEarlierMessages, earlierTurnCount, streamingStore,
     agentRunning, modelNames, modelList, modelError, modelScopeWarnings, modelThinkingLevels, modelThinkingLevelMaps, newSessionModel, toolPreset, thinkingLevel,
     retryInfo, contextUsage, systemPrompt, forkingEntryId,
     isCompacting, compactError, compactResult, currentModel, displayModel, modelSwitching, sessionStats, autoCompactionEnabled,

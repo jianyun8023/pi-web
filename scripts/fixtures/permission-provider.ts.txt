@@ -1,0 +1,18 @@
+const workspace = __WORKSPACE__;
+import {createFauxCore,fauxAssistantMessage,fauxText,fauxToolCall} from __FAUX_IMPORT__;
+import {createPiAutoReviewExtension} from __REVIEWER_IMPORT__;
+const core=createFauxCore({provider:'permission-fixture',models:[{id:'reviewer-fixture'}]});
+export default function(pi) {
+ let outcome='allow';
+ pi.registerProvider('permission-fixture',{baseUrl:'http://fixture.invalid',api:core.api,apiKey:'synthetic-fixture',models:core.models,streamSimple(model,context,options){
+   core.setResponses([async ctx=>{
+     const last=ctx.messages.at(-1);
+     const text=typeof last.content==='string'?last.content:last.content.map(p=>p.text||'').join('');
+     const isReview=text.includes('"evidence"')&&text.includes('"request"');
+     if(isReview) {if(outcome==='offline') throw new Error('fixture provider unavailable'); await new Promise(r=>setTimeout(r,outcome==='timeout'?1500:800));return fauxAssistantMessage([fauxText(JSON.stringify({outcome:outcome==='timeout'?'allow':outcome,risk_level:outcome==='defer'?'medium':'low',user_authorization:'high',rationale:'Isolated browser permission fixture.'}))]);}
+     if(last.role==='user') {outcome=['defer','deny','timeout','offline'].find(o=>text.includes(o))??'allow';return fauxAssistantMessage([fauxToolCall('write',{path:workspace + "/" + outcome + ".txt",content:'isolated reviewed write'})]);}
+     return fauxAssistantMessage([fauxText('Fixture finished.')]);
+   }]);return core.streamSimple(model,context,options);
+ }});
+ createPiAutoReviewExtension({config:{model:'current',reasoning:'off',timeoutMs:1000,maxTokens:256,retries:0,maxUserTranscriptTokens:1200,maxToolTranscriptTokens:1200,maxRelevantResultTokens:800,maxReviewerInputTokens:8192,breakGlassEnabled:true,failureMode:'defer',grantTtlMs:60000,autoConfirmBoundedAllows:['path','external_directory'],policyAudit:{enabled:false,retentionDays:180}},allowUntrustedWorkspace:true})(pi);
+}

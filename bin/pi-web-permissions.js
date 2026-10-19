@@ -55,6 +55,13 @@ function applyPermissionCompatibility(agentDir) {
 }
 
 function checkConfiguredPermissionCompatibility(agentDir) {
+  if (fs.existsSync(path.join(__dirname, "../vendor/permission-bundle.json"))) {
+    const settingsFile = path.join(agentDir, "settings.json");
+    if (!fs.existsSync(settingsFile)) return;
+    const locked = require("./pi-web-fork-packages.cjs");
+    if (locked.configured(agentDir).size) locked.verify(agentDir, path.resolve(__dirname, ".."));
+    return;
+  }
   const settingsFile = path.join(agentDir, "settings.json");
   if (!fs.existsSync(settingsFile)) return;
   const settings = JSON.parse(fs.readFileSync(settingsFile, "utf8"));
@@ -74,7 +81,13 @@ if (require.main === module) {
   const index = args.indexOf("--agent-dir");
   const agentDir = index < 0 ? process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), ".pi", "agent") : path.resolve(args[index + 1]);
   try {
-    if (args.includes("--apply")) console.log(`Pi permission compatibility: ${applyPermissionCompatibility(agentDir)} files updated.`);
+    if (fs.existsSync(path.join(__dirname, "../vendor/permission-bundle.json"))) {
+      const locked = require("./pi-web-fork-packages.cjs");
+      const root = path.resolve(__dirname, "..");
+      if (args.includes("--apply")) locked.install(agentDir, root);
+      else locked.verify(agentDir, root);
+      console.log("Pi permission fork bundle: verified.");
+    } else if (args.includes("--apply")) console.log(`Pi permission compatibility: ${applyPermissionCompatibility(agentDir)} files updated.`);
     else {
       const missing = inspectPermissionCompatibility(agentDir).length;
       if (missing) throw new Error(`Pi permission compatibility: ${missing} files need --apply.`);

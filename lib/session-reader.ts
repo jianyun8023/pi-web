@@ -1,3 +1,4 @@
+import { projectAuditBranch } from "./permission-audit";
 import {
   SessionManager,
   getAgentDir,
@@ -740,6 +741,7 @@ export function buildSessionContext(
     oldestEntryId: sliced[0]?.id ?? null,
     hasMore,
     turnsBefore,
+    permissionAudit: projectAuditBranch(leafId === null ? [] : sliceActiveBranch(entries, leafId ?? null, entries.length)),
     ...getSessionSettings(entries, leafId),
   };
 }

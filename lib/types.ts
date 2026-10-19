@@ -395,6 +395,7 @@ export interface SessionInfo {
 }
 
 export interface SessionContext {
+  permissionAudit?: import("./permission-audit").AuditRow[];
   messages: AgentMessage[];
   entryIds: string[]; // parallel to messages — the session entry id for each message
   oldestEntryId: string | null;

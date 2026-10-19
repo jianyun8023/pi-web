@@ -1,3 +1,5 @@
+import { createPermissionAuditBridge } from "./permission-audit-bridge";
+import type { AuditRow } from "./permission-audit";
 import type { ThinkingLevel } from "@earendil-works/pi-agent-core";
 import { createAgentSessionFromServices, createAgentSessionServices, getAgentDir, initTheme, SessionManager, SettingsManager, Theme, type ModelRuntime } from "@earendil-works/pi-coding-agent";
 import { KeybindingsManager as TuiKeybindingsManager, TUI_KEYBINDINGS } from "@earendil-works/pi-tui";
@@ -127,6 +129,7 @@ type ExtensionCommandContextActionsLike = {
 };
 
 type AgentSessionWrapperOptions = {
+  permissionAudit?: ReturnType<typeof createPermissionAuditBridge>;
   exactSystemPrompt?: () => string;
   chatOnly?: boolean;
   onAgentRunComplete?: AgentRunCompleteListener;
@@ -359,6 +362,9 @@ export class AgentSessionWrapper {
     this.suppressCompletionNotifications = options.suppressCompletionNotifications ?? false;
     this.mcpHost = options.mcpHost;
     this.chatOnlyExtensionModel = options.chatOnlyExtensionModel;
+    options.permissionAudit?.connect((row: AuditRow) => this.emit({ type: "permission_audit", update: row }), () => this.emit({ type: "permission_audit_reset" }));
+    this.permissionAuditSnapshot = options.permissionAudit?.snapshot;
+
   }
 
   get sessionId(): string {
@@ -754,8 +760,11 @@ export class AgentSessionWrapper {
     cacheSessionPath(this.inner.sessionId, sessionFile);
   }
 
+  private permissionAuditSnapshot?: () => AuditRow[];
+
   onEvent(listener: EventListener): () => void {
     this.listeners.add(listener);
+    for (const row of this.permissionAuditSnapshot?.() ?? []) listener({ type: "permission_audit", update: row });
     for (const event of this.pendingUiRequests.values()) listener(event);
     for (const event of this.activeToolEvents.values()) listener(event);
     return () => {
@@ -2134,6 +2143,7 @@ const SUBAGENT_CONTROLLER = createSubagentController({
   getSession: (sessionId) => getRegistry().get(sessionId),
   registerSession: (inner, options) => {
     const wrapper = new AgentSessionWrapper(inner, {
+      permissionAudit: options?.permissionAudit,
       ...(options?.exactSystemPrompt !== undefined
         ? { exactSystemPrompt: options.exactSystemPrompt }
         : {}),
@@ -2569,7 +2579,9 @@ export async function startRpcSession(
       exactSystemPrompt: subagentResources.exactSystemPrompt
         ?? (chatOnly ? subagentResources.appendSystemPrompt[0] ?? "" : undefined),
     }) : undefined;
+    const permissionAudit = createPermissionAuditBridge();
     const subagentExtensionFactories = [
+      permissionAudit.extension,
       ...(subagentCodemode ? [subagentCodemode] : []),
       ...(subagentMcp && subagentResources
         ? [...subagentMcp.extensions, createSubagentMcpPolicyExtension(() => subagentResources)]
@@ -2600,6 +2612,7 @@ export async function startRpcSession(
           ? { ...CHAT_ONLY_RESOURCE_LOADER_OPTIONS, extensionFactories: [exactSystemPromptExtension] }
         : {
             extensionFactories: [
+              permissionAudit.extension,
               ...(builtins?.extensions ?? []),
               createReadOnlyMcpPolicyExtension(),
               createProjectCommandBashExtension({
@@ -2731,6 +2744,7 @@ export async function startRpcSession(
     exactSystemPromptRef.current = exactSystemPrompt;
     const mcpHost = builtins?.mcpHost ?? subagentMcp?.mcpHost;
     const wrapper = new AgentSessionWrapper(inner, {
+      permissionAudit,
       exactSystemPrompt,
       chatOnly,
       onAgentRunComplete: (completedSessionId, sessionName) => {

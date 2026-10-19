@@ -1,4 +1,5 @@
 "use client";
+import { PermissionAuditProvider, PermissionAuditHistory } from "./PermissionReviewDetails";
 import { registerAbortHandler } from "@/hooks/useKeyboardShortcuts";
 import Image from "next/image";
 import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -277,7 +278,7 @@ export function ChatWindow({ session, searchTarget, onSearchTargetHandled, initi
   const [restoreAnchorReady, setRestoreAnchorReady] = useState(false);
 
   const {
-    loading, error, messages, activeToolResults, entryIds, messageKeys, historyCursor, hasEarlierMessages, earlierTurnCount, streamingStore,
+    permissionAudit, loading, error, messages, activeToolResults, entryIds, messageKeys, historyCursor, hasEarlierMessages, earlierTurnCount, streamingStore,
     agentRunning, bashRunning, pendingBash, modelNames, modelList, modelError, modelScopeWarnings, modelThinkingLevels, modelThinkingLevelMaps, toolPreset, thinkingLevel,
     retryInfo, contextUsage, forkingEntryId,
     isCompacting, compactError, compactResult, displayModel: displayModelValue, modelSwitching, sessionStats,
@@ -1015,6 +1016,7 @@ export function ChatWindow({ session, searchTarget, onSearchTargetHandled, initi
   }
 
   return (
+    <PermissionAuditProvider rows={permissionAudit} sessionId={sessionIdRef.current}>
     <div
       className="chat-content relative flex h-full min-w-0 flex-col overflow-hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
@@ -1091,6 +1093,7 @@ export function ChatWindow({ session, searchTarget, onSearchTargetHandled, initi
         >
           <div style={{ minWidth: 0, padding: `0 ${CHAT_COLUMN_PADDING}px` }}>
             <div ref={messageContentRef} onPointerUp={captureQuotedSelection} style={{ width: "100%", minWidth: 0, maxWidth: "var(--chat-content-max-width, 820px)", margin: "0 auto" }}>
+            <PermissionAuditHistory />
             {(() => {
               let lastUserIdx = -1;
               for (let i = messages.length - 1; i >= 0; i--) {
@@ -1514,6 +1517,7 @@ export function ChatWindow({ session, searchTarget, onSearchTargetHandled, initi
       </div>
       {isEmptyNew && <div className="min-h-0 flex-1" />}
     </div>
+    </PermissionAuditProvider>
   );
 }
 

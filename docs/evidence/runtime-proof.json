@@ -1,0 +1,44 @@
+[
+  {
+    "outcome": "allow",
+    "sessionId": "01a15503-d86f-76a2-a076-83fbc509fd82",
+    "pass": true,
+    "gateCount": 2,
+    "durationMs": 978
+  },
+  {
+    "outcome": "defer",
+    "sessionId": "01a15503-e06a-76a2-a076-83fd82e60e04",
+    "pass": true,
+    "gateCount": 2,
+    "durationMs": 1005
+  },
+  {
+    "outcome": "deny",
+    "sessionId": "01a15503-e494-76a2-a076-83fe103a2f90",
+    "pass": true,
+    "gateCount": 1,
+    "durationMs": 941
+  },
+  {
+    "outcome": "offline",
+    "sessionId": "01a15503-e852-76a2-a076-84001a461654",
+    "pass": true,
+    "gateCount": 1,
+    "durationMs": 145
+  },
+  {
+    "outcome": "timeout",
+    "sessionId": "01a15503-e8f3-76a2-a076-84026ab5a65b",
+    "pass": true,
+    "gateCount": 1,
+    "durationMs": 1664
+  },
+  {
+    "outcome": "cancel",
+    "sessionId": "01a15503-ef81-76a2-a076-8404e36b22f0",
+    "pass": true,
+    "gateCount": 1,
+    "durationMs": 946
+  }
+]
