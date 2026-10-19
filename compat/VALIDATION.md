@@ -11,3 +11,5 @@
 - Actual installation preserves the existing local `src/review/input.ts` token-estimation modification and user model settings. Source files changed by the compatibility installer are listed with original/patched SHA-256 hashes in `manifest.json`.
 
 Deterministic tests do not prove model decision accuracy on arbitrary real workloads. Existing live CLI sessions need `/reload` or restart to load changed extension source; no unrelated CLI session is interrupted by deployment.
+
+Installation smoke: dedicated release `de36680` is active at `http://127.0.0.1:30141`. Page and model discovery returned 200 (65 models); the existing `magpie/group/kimi-k2.8` default remained selected. A real-config RPC session loaded all three auto-review commands and was deleted successfully after inspection. No running or pending-approval sessions remained. The original token estimator SHA-256 was identical before and after deployment. The old npm package directory and affected extension sources are retained in the timestamped backup recorded by `~/.local/share/pi-web-fork/current.json`.

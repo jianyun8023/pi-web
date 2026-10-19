@@ -32,7 +32,7 @@ node bin/pi-web.js --hostname 127.0.0.1 --port 30141
 
 The source transforms and newly added TypeScript files live here; `manifest.json` pins the npm originals and patched outputs. Tests install the same transforms into isolated copies of the exact npm packages. Plugin reinstall/update may remove the patch: re-run verification, review the new source/version if different, and update the manifest deliberately. No release is published to npm by this task.
 
-For this local build, point the existing global `@agegr/pi-web` package link at the checked-out fork after saving the original package directory. Its `node_modules` and `.next` are the tested local build. Restore the saved directory and original extension files to roll back, then restart the service.
+For this local build, copy the tested runtime files and dependencies into a dedicated release directory under `~/.local/share/pi-web-fork/releases/<commit>` and point the existing global `@agegr/pi-web` package link there after saving the original package directory. Keep the production `.next` separate from the source checkout so development builds cannot overwrite it. Deployment records and original package/plugin copies live under `~/.local/share/pi-web-fork/backups/`; `current.json` records the active release and backup. Restore the saved package directory and original extension files to roll back, then restart the service.
 
 ## Validation
 
