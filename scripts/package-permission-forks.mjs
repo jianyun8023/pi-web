@@ -11,7 +11,9 @@ const manifest={schemaVersion:1,piSdk:'1.3.0',packages:{}};
 const hash=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');
 for(const input of roots){
  const cwd=path.resolve(input),pkg=JSON.parse(fs.readFileSync(path.join(cwd,'package.json')));
- const packed=JSON.parse(execFileSync('npm',['pack','--ignore-scripts','--json','--pack-destination',vendor],{cwd,encoding:'utf8',env:{...process.env,npm_config_cache:'/tmp/pi-npm-cache'}}))[0];
+ const permission=pkg.name==='@gotgenes/pi-permission-system';
+ const output=JSON.parse(execFileSync(permission?'pnpm':'npm',['pack',...(permission?[]:['--ignore-scripts']),'--json','--pack-destination',vendor],{cwd,encoding:'utf8',env:{...process.env,npm_config_cache:'/tmp/pi-npm-cache'}}));
+ const packed=Array.isArray(output)?output[0]:{...output,filename:path.basename(output.filename)};
  const archive=path.join(vendor,packed.filename),unpacked=fs.mkdtempSync(path.join(os.tmpdir(),'pi-fork-pack-'));
  try{execFileSync('tar',['-xzf',archive,'-C',unpacked]);const files={};for(const entry of packed.files){files[entry.path]=hash(fs.readFileSync(path.join(unpacked,'package',entry.path)));}
  const revision=execFileSync('git',['rev-parse','HEAD'],{cwd,encoding:'utf8'}).trim();
